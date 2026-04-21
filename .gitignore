@@ -1,0 +1,8 @@
+# Compilado
+bin/
+
+# Configuración
+.settings/
+.project
+.classpath
+.metadata/
