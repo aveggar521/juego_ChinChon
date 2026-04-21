@@ -1,7 +1,5 @@
 package Chinchon.model;
 
-import java.util.Set;
-
 /**
  * Representa una carta de la baraja.
  */
@@ -31,12 +29,12 @@ public class Card {
    * 
    * @return Valores de la carta.
    */
-  public Set<Integer> getValues() {
-    return rank.getValues();
+  public int getValue() {
+    return rank.getValue();
   }
 
   @Override
   public String toString() {
-    return String.format("%s%s", suit.getSymbol(), rank.getSymbol());
+    return rank.getValue() + suit.getColoredSymbol();
   }
 }
