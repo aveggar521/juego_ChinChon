@@ -4,36 +4,82 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Representa el mazo de cartas.
+ */
 public class Deck {
-  private List<Card> cards = new ArrayList<>();
 
-  public Deck() {
-    fill();
+  /**
+   * Lista de cartas del mazo.
+   */
+  private List<Card> cards;
+
+  /**
+   * Número de barajas.
+   */
+  private int numberOfDecks;
+
+  /**
+   * Crea un mazo con un número de barajas.
+   * 
+   * @param numberOfDecks Número de barajas.
+   */
+  public Deck(int numberOfDecks) {
+    this.numberOfDecks = numberOfDecks;
+    this.cards = new ArrayList<>();
+    initializeDeck();
     shuffle();
   }
 
   /**
-   * Llena la baraja de cartas nuevas.
+   * Inicializa el mazo con las cartas.
    */
-  private void fill() {
-    for (Suit suit : Suit.values()) {
-      for (Rank rank : Rank.values()) {
-        Card card = new Card(suit, rank);
-        cards.add(card);
+  public void initializeDeck() {
+    cards.clear();
+
+    for (int i = 0; i < numberOfDecks; i++) {
+      for (Suit suit : Suit.values()) {
+        for (Rank rank : Rank.values()) {
+          cards.add(new Card(suit, rank));
+        }
       }
     }
   }
 
   /**
-   * Desordena las cartas de la baraja.
+   * Baraja las cartas.
    */
-  private void shuffle() {
+  public void shuffle() {
     Collections.shuffle(cards);
   }
 
-  @Override
-  public String toString() {
-    String message = cards.size() == 1 ? "carta restante" : "cartas restantes";
-    return String.format("%d %s", cards.size(), message);
+  /**
+   * Roba una carta del mazo.
+   * 
+   * @return Carta robada.
+   */
+  public Card drawCard() {
+    if (cards.isEmpty()) {
+      return null;
+    }
+    return cards.remove(0);
+  }
+
+  /**
+   * Comprueba si el mazo está vacío.
+   * 
+   * @return true si está vacío, false en caso contrario.
+   */
+  public boolean isEmpty() {
+    return cards.isEmpty();
+  }
+
+  /**
+   * Obtiene el número de cartas restantes.
+   * 
+   * @return Número de cartas.
+   */
+  public int size() {
+    return cards.size();
   }
 }
