@@ -1,4 +1,4 @@
-package Chinchon.model;
+package chinchon.model;
 
 /**
  * Representa a un jugador humano.

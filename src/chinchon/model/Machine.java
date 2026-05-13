@@ -1,4 +1,4 @@
-package Chinchon.model;
+package chinchon.model;
 
 import java.util.List;
 

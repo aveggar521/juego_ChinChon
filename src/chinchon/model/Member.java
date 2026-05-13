@@ -1,4 +1,4 @@
-package Chinchon.model;
+package chinchon.model;
 
 /**
  * Representa un participante de la partida.

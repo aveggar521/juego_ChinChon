@@ -1,4 +1,4 @@
-package Chinchon.model;
+package chinchon.model;
 
 /**
  * Enum que representa un rango de una carta.

@@ -1,4 +1,4 @@
-package Chinchon.model;
+package chinchon.model;
 
 /**
  * Fábrica para crear participantes de la partida.

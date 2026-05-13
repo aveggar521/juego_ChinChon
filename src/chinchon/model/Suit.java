@@ -1,4 +1,4 @@
-package Chinchon.model;
+package chinchon.model;
 
 /**
  * Enum que representa los palos de una carta.
