@@ -1,41 +1,43 @@
 package chinchon.app;
 
 import chinchon.model.Game;
-import chinchon.model.Member;
 import chinchon.model.MemberFactory;
 import chinchon.util.Console;
 
 public class Main {
-  public static void main(String[] args) {
-    // 1. Instanciar la consola (la herramienta que usará todo el juego)
-    Console console = new Console();
+    public static void main(String[] args) {
+        Console console = new Console();
 
-    try {
-      console.println("=== BIENVENIDO AL CHINCHÓN ===");
+        console.println("=== BIENVENIDO AL CHINCHÓN ===");
+        
+        // 1. Pedimos el límite de puntos
+        console.println("Introduce el límite de puntos para la partida (ej. 100):");
+        int limitePuntos = Integer.parseInt(console.readLine());
 
-      // 2. Configuración inicial
-      int puntosLimite = 100;
-      int numeroDeMazos = 1;
+        // 2. Pedimos el número de mazos
+        console.println("Introduce el número de barajas/mazos con los que jugar (ej. 1 o 2):");
+        int numeroMazos = Integer.parseInt(console.readLine());
 
-      // 3. Obtener la instancia del juego pasando la consola (Singleton)
-      Game game = Game.getInstance(puntosLimite, numeroDeMazos, console);
+        // 3. Inicializamos la instancia única de Game con los datos introducidos
+        Game juego = Game.getInstance(limitePuntos, numeroMazos, console);
 
-      // 4. Crear jugadores usando la Factoría
-      Member p1 = MemberFactory.createMember("player", "Jugador 1");
-      Member machine = MemberFactory.createMember("machine", "IA de Entrenamiento");
+        // 4. Pedimos el número de jugadores para crearlos con la Factory
+        console.println("¿Cuántos jugadores humanos van a jugar?");
+        int numHumanos = Integer.parseInt(console.readLine());
 
-      // 5. Añadir los jugadores a la partida
-      game.addPlayer(p1);
-      game.addPlayer(machine);
+        console.println("¿Cuántos oponentes máquina (IA) quieres añadir?");
+        int numMaquinas = Integer.parseInt(console.readLine());
 
-      // 6. ¡Comenzar la partida!
-      game.startGame();
+        // 5. Creamos y añadimos los jugadores usando "PLAYER" y "MACHINE"
+        for (int i = 1; i <= numHumanos; i++) {
+            juego.addPlayer(MemberFactory.createMember("PLAYER", "Jugador " + i));
+        }
 
-    } catch (Exception e) {
-      console.println("Se ha producido un error inesperado: " + e.getMessage());
-    } finally {
-      // 7. Cerrar la consola al terminar (si tu clase Console tiene close())
-      console.close();
+        for (int i = 1; i <= numMaquinas; i++) {
+            juego.addPlayer(MemberFactory.createMember("MACHINE", "CPU " + i));
+        }
+
+        // 6. Arrancamos el motor del juego
+        juego.startGame();
     }
-  }
 }
