@@ -48,6 +48,23 @@ Se han realizado pruebas estructurales para garantizar que todos los caminos ló
 * **Lógica de Reabastecimiento:** Verificación del método de reinicio del mazo cuando se agotan las cartas y se debe recuperar la pila de descartes.
 * **Control de Flujo:** Pruebas sobre los bucles de turno para confirmar que el juego gestiona correctamente los saltos de turno de jugadores eliminados.
 
+### Evidencias de los Test Unitarios (JUnit 5)
+
+Aquí está la captura de pantalla con la barra verde en Eclipse, demostrando que los 7 casos de prueba parametrizados con `@CsvSource` pasan correctamente:
+
+![Resultados de las Pruebas Unitarias](./assets/captura_test.png)
+
+#### ¿Qué se comprueba?
+
+* **En el método `calcularPuntos_conDosCartas_devuelveSumaEsperada` (Caja Negra):** Probamos que la lógica del juego suma bien los puntos de las cartas sueltas que no se han podido combinar. Le metemos un par de cartas a la mano y comprobamos si el resultado coincide con lo que dicen las reglas (por ejemplo, que un 1 y un 2 sumen 3 puntos, o que un 11 y un 12 sumen 23). Es caja negra porque miramos que el resultado sea correcto según las normas, sin importar cómo esté programado el bucle por dentro.
+
+* **En el método `puedeCerrar_conPuntosPermitidos_devuelveTrue` (Caja Blanca / Valores Límite):** Aquí atacamos directamente un camino crítico del código: la condición para poder cerrar la mano. Probamos los "valores frontera" permitidos por el reglamento, es decir, metemos de forma exacta 0, 1 y 5 puntos de penalización para asegurar que el `if (puntos <= 5)` interno funciona bien y devuelve `true` en todos los casos límite.
+
+#### ¿Qué NO estamos comprobando aquí? (Límites del test)
+
+* **No probamos combinaciones completas de 7 cartas:** Estos test son unitarios y simples; solo comprueban sumas de cartas sueltas y el límite de cierre, pero no simulan jugadas complejas (como tener un Chinchón con una escalera de 7 cartas seguidas del mismo palo).
+* **No probamos el flujo general del juego:** Al probar solo la clase `Hand` aislada, no estamos testeando cómo roban las cartas del mazo (`Deck`), cómo se gestionan los turnos en `Game`, ni cómo decide la IA de la clase `Machine`. Eso ya formaría parte de las pruebas de integración del sistema completo.
+
 ### Requisitos Previos
 * Java JDK 21 o superior.
 * Un IDE compatible con Java (Eclipse, IntelliJ o VS Code).
