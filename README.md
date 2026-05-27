@@ -13,6 +13,25 @@ Para el desarrollo se han aplicado los siguientes conceptos técnicos:
 * **Herencia y Polimorfismo:** Empleados en la jerarquía de `Member`, permitiendo que el juego gestione una lista genérica de jugadores independientemente de si son humanos o máquinas.
 * **Encapsulamiento:** Toda la lógica de validación de combinaciones (tríos y escaleras) se encuentra protegida dentro de la clase `Hand`.
 
+## UML (imagen y explicación)
+El diseño arquitectónico del sistema, la modularización de los componentes del juego y sus relaciones se detallan en el siguiente diagrama de clases:
+
+![Diagrama UML](./UML_chinchon.png)
+
+A continuación, se justifican técnicamente las relaciones y tipos de clases implementados según los requisitos del paradigma de la Programación Orientada a Objetos trabajados en el curso:
+
+### 1. Clase Abstracta y Herencia (Polimorfismo)
+* **Clase Abstracta `Member`:** Se ha definido como una clase abstracta porque representa un concepto genérico de "participante" en el juego del Chinchón. No tiene sentido instanciar un `Member` de forma directa, sino que sirve de plantilla base compartiendo atributos comunes como el nombre, la mano de cartas (`Hand`) y la puntuación acumulada.
+* **Herencia (`Player` y `Machine`):** Las clases `Player` (usuario humano) y `Machine` (inteligencia artificial) heredan directamente de `Member`. Esta especialización permite aplicar **polimorfismo**: el motor del juego (`Game`) puede gestionar una lista genérica de participantes (`List<Member>`) y lanzar sus turnos de forma transparente, ejecutando la lógica de consola para el humano o los algoritmos de decisión automáticos para la máquina sin conocer su subtipo concreto.
+
+### 2. Composición (Relación fuerte de ciclo de vida)
+* **`Hand` en `Member`:** Existe una relación de **composición** de `Member` hacia `Hand`. Una mano de cartas no tiene sentido de la existencia si no pertenece a un jugador concreto. Si un jugador es eliminado o destruido en memoria, su mano se destruye con él. Su ciclo de vida está ligado al 100%.
+* **`Card` en `Hand`:** La clase `Hand` compone las instancias de `Card` (las 7 cartas que maneja). La mano controla por completo la vida, inserción y descarte de estas estructuras inmutables.
+
+### 3. Agregación (Relación débil / de pertenencia)
+* **`Member` en `Game`:** El motor principal `Game` mantiene una relación de **agregación** hacia la lista de componentes `Member`. Aunque el juego coordina a los jugadores durante la partida, los jugadores tienen una identidad propia independiente del estado del tablero (de hecho, se crean fuera a través de la factoría y luego se añaden a la partida).
+* **`Card` en `Deck`:** El mazo contiene y gestiona las cartas (`Card`), pero es una agregación puesto que las cartas pasan constantemente del mazo a las manos de los jugadores y a la pila de descartes, sobreviviendo de manera independiente a si el mazo se vacía o se reinicia.
+
 ## Pruebas del Sistema
 
 Para asegurar el correcto funcionamiento de la lógica de juego, se han realizado diferentes tipos de pruebas unitarias utilizando JUnit:
