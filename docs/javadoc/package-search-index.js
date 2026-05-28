@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html","k":"18"},{"l":"chinchon.app"},{"l":"chinchon.model"},{"l":"chinchon.test"},{"l":"chinchon.util"}];updateSearchResults();

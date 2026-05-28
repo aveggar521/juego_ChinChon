@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 /**
  * Clase para gestionar la entrada y salida de datos por consola.
+ * @author Alejandro Vega
  */
 public class Console {
 

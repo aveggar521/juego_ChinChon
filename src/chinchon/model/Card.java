@@ -2,6 +2,7 @@ package chinchon.model;
 
 /**
  * Representa una carta de la baraja española.
+ * @author Alejandro Vega
  */
 public class Card {
 
@@ -16,8 +17,9 @@ public class Card {
   private final Rank rank;
 
   /**
-   * Crea una carta con un palo y rango específicos. * @param suit Palo de la carta.
+   * Crea una carta con un palo y rango específicos. 
    * 
+   * @param suit Palo de la carta.
    * @param rank Rango de la carta.
    */
   public Card(Suit suit, Rank rank) {
@@ -26,28 +28,36 @@ public class Card {
   }
 
   /**
-   * Obtiene el valor numérico de la carta para el conteo de puntos. * @return Valor entero de la carta.
+   * Obtiene el valor numérico de la carta para el conteo de puntos. 
+   * 
+   * @return Valor entero de la carta.
    */
   public int getValue() {
     return rank.getValue();
   }
 
   /**
-   * Obtiene el palo de la carta. Necesario para verificar combinaciones y escaleras. * @return El Enum Suit de la carta.
+   * Obtiene el palo de la carta. Necesario para verificar combinaciones y escaleras. 
+   * 
+   * @return El Enum Suit de la carta.
    */
   public Suit getSuit() {
     return suit;
   }
 
   /**
-   * Obtiene el rango de la carta. * @return El Enum Rank de la carta.
+   * Obtiene el rango de la carta. 
+   * 
+   * @return El Enum Rank de la carta.
    */
   public Rank getRank() {
     return rank;
   }
 
   /**
-   * Representación textual de la carta con color. Ejemplo: "7 de Copas" (en rojo). * @return String formateado.
+   * Representación textual de la carta con color. Ejemplo: "7 de Copas" (en rojo). 
+   * 
+   * @return String formateado.
    */
   @Override
   public String toString() {

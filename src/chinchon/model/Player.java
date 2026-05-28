@@ -2,6 +2,7 @@ package chinchon.model;
 
 /**
  * Representa a un jugador humano.
+ * @author Alejandro Vega
  */
 public class Player extends Member {
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Representa el mazo de cartas.
+ * @author Alejandro Vega
  */
 public class Deck {
 

@@ -4,7 +4,21 @@ import chinchon.model.Game;
 import chinchon.model.MemberFactory;
 import chinchon.util.Console;
 
+/**
+ * Clase principal que actúa como el punto de entrada de la aplicación.
+ * Se encarga de gestionar la interfaz inicial por consola, solicitar los
+ * parámetros de configuración al usuario y arrancar el motor del juego Chinchón.
+ * * @author Alejandro Vega
+ */
 public class Main {
+
+    /**
+     * Método de entrada de la aplicación (main).
+     * Controla el flujo inicial: lectura de configuración (puntos, mazos y jugadores),
+     * inicialización del juego mediante el patrón Singleton y creación de participantes
+     * utilizando una Factoría.
+     * * @param args Argumentos de la línea de comandos (no se utilizan en este proyecto).
+     */
     public static void main(String[] args) {
         Console console = new Console();
 

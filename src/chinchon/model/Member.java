@@ -2,6 +2,7 @@ package chinchon.model;
 
 /**
  * Representa un participante de la partida.
+ * @author Alejandro Vega
  */
 public abstract class Member {
 

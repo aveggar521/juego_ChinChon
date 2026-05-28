@@ -2,6 +2,7 @@ package chinchon.model;
 
 /**
  * Fábrica para crear participantes de la partida.
+ * @author Alejandro Vega
  */
 public class MemberFactory {
 

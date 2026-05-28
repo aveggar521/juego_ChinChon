@@ -6,8 +6,8 @@ import java.util.List;
 import chinchon.util.Console;
 
 /**
- * Controla toda la lógica del juego Chinchón. Implementa el patrón Singleton para asegurar una única instancia de la partida. Se encarga de gestionar los turnos, el mazo, los descartes y las puntuaciones. * @author Tu Nombre
- * 
+ * Controla toda la lógica del juego Chinchón. Implementa el patrón Singleton para asegurar una única instancia de la partida. Se encarga de gestionar los turnos, el mazo, los descartes y las puntuaciones.
+ * @author Alejandro Vega
  */
 public class Game {
 
@@ -42,8 +42,8 @@ public class Game {
   private Console console;
 
   /**
-   * Constructor privado para aplicar el patrón Singleton. Inicializa los componentes básicos de la partida. * @param pointLimit Límite de puntos establecido para la partida.
-   * 
+   * Constructor privado para aplicar el patrón Singleton. Inicializa los componentes básicos de la partida. 
+   * @param pointLimit Límite de puntos establecido para la partida.
    * @param numberOfDecks Cantidad de mazos de cartas a utilizar.
    * @param console       Instancia de la utilidad de consola para la comunicación.
    */
@@ -58,8 +58,9 @@ public class Game {
   }
 
   /**
-   * Obtiene la instancia única de la partida. Si no existe, la crea. * @param pointLimit Límite de puntos para la partida.
+   * Obtiene la instancia única de la partida. Si no existe, la crea. 
    * 
+   * @param pointLimit Límite de puntos para la partida.
    * @param numberOfDecks Cantidad de mazos a utilizar.
    * @param console       Instancia de la utilidad de consola.
    * @return La instancia única de la clase Game.
@@ -72,7 +73,8 @@ public class Game {
   }
 
   /**
-   * Añade un nuevo jugador o máquina a la lista de participantes. * @param player El miembro que se unirá a la partida.
+   * Añade un nuevo jugador o máquina a la lista de participantes. 
+   * @param player El miembro que se unirá a la partida.
    */
   public void addPlayer(Member player) {
     players.add(player);
@@ -131,7 +133,8 @@ public class Game {
   }
 
   /**
-   * Ejecuta las acciones de un turno individual: robar, mostrar mano y descartar. Diferencia la lógica si el jugador es humano o máquina. * @param player El miembro que debe realizar su turno.
+   * Ejecuta las acciones de un turno individual: robar, mostrar mano y descartar. Diferencia la lógica si el jugador es humano o máquina.  
+   * @param player El miembro que debe realizar su turno.
    */
   private void executeTurn(Member player) {
     console.println("\n--- Turno de: " + player.getName() + " ---");
@@ -183,8 +186,9 @@ public class Game {
   }
 
   /**
-   * Lee un entero por consola asegurando que se encuentra en un rango específico. * @param min Valor mínimo aceptado.
+   * Lee un entero por consola asegurando que se encuentra en un rango específico. 
    * 
+   * @param min Valor mínimo aceptado.
    * @param max Valor máximo aceptado.
    * @return El número entero validado introducido por el usuario.
    */

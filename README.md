@@ -65,6 +65,20 @@ Aquí está la captura de pantalla con la barra verde en Eclipse, demostrando qu
 * **No probamos combinaciones completas de 7 cartas:** Estos test son unitarios y simples; solo comprueban sumas de cartas sueltas y el límite de cierre, pero no simulan jugadas complejas (como tener un Chinchón con una escalera de 7 cartas seguidas del mismo palo).
 * **No probamos el flujo general del juego:** Al probar solo la clase `Hand` aislada, no estamos testeando cómo roban las cartas del mazo (`Deck`), cómo se gestionan los turnos en `Game`, ni cómo decide la IA de la clase `Machine`. Eso ya formaría parte de las pruebas de integración del sistema completo.
 
+## 5. Documentación de Código (JavaDoc)
+
+Todo el código del proyecto está documentado usando el estándar **JavaDoc**. He incluido comentarios en las clases, constructores y métodos con sus etiquetas correspondientes (`@param` para los parámetros que reciben y `@return` para lo que devuelven) para que cualquier persona pueda entender cómo funciona el código a la primera.
+
+### Referencia de la Documentación Generada
+La documentación se ha exportado automáticamente a páginas HTML para que se pueda revisar de forma cómoda desde el navegador:
+
+* **Dónde están los archivos:** Toda esta documentación web se ha guardado en la carpeta raíz dentro de [`docs/javadoc/`](./docs/javadoc/).
+* **Cómo verla:** Para navegar por todas las clases y métodos como si fuera una web oficial, solo hay que abrir el archivo principal [**`index.html`**](./docs/javadoc/index.html) con cualquier navegador (Chrome, Firefox, etc.).
+
+Para demostrar que todo el código está bien etiquetado y que el JavaDoc se genera sin problemas, aquí dejo una captura de cómo se ve la documentación de la clase principal:
+
+![Evidencia de JavaDoc](./assets/captura_javadoc.png)
+
 ### Requisitos Previos
 * Java JDK 21 o superior.
 * Un IDE compatible con Java (Eclipse, IntelliJ o VS Code).

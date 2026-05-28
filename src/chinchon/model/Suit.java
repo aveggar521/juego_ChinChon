@@ -2,6 +2,7 @@ package chinchon.model;
 
 /**
  * Enum que representa los palos de una carta.
+ * @author Alejandro Vega
  */
 public enum Suit {
   COINS("Moneda", "\u001B[33m"), CUPS("Copa", "\u001B[31m"), STAVES("Basto", "\u001B[32m"),

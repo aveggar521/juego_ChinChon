@@ -3,7 +3,8 @@ package chinchon.model;
 import java.util.List;
 
 /**
- * Máquina con IA simple para jugar al Chinchón.
+ * Máquina con IA para jugar al Chinchón.
+ * @author Alejandro Vega
  */
 public class Machine extends Member {
 

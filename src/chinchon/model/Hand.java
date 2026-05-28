@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Representa la mano de cartas de un jugador y su lógica de combinaciones.
+ * @author Alejandro Vega
  */
 public class Hand {
 
@@ -50,7 +51,9 @@ public class Hand {
   }
 
   /**
-   * Calcula los puntos de las cartas que NO están combinadas. * @return Suma de valores de cartas sueltas.
+   * Calcula los puntos de las cartas que NO están combinadas. 
+   * 
+   * @return Suma de valores de cartas sueltas.
    */
   public int calculatePoints() {
     boolean[] combined = getCombinedMask();

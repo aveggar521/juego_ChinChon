@@ -14,6 +14,7 @@ import chinchon.model.Suit;
 
 /**
  * Clase de pruebas unitarias parametrizadas para validar la lógica de la mano. Verifica el cálculo de puntuación y las condiciones de cierre del juego.
+ * @author Alejandro Vega
  */
 public class HandParameterizedTest {
 
