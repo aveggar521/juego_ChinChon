@@ -74,7 +74,16 @@ public class Deck {
   public boolean isEmpty() {
     return cards.isEmpty();
   }
-
+  /**
+   * Reabastece el mazo utilizando una lista de cartas procedentes del descarte
+   * y las baraja de nuevo para continuar la partida.
+   * * @param cardsToReturn Lista de cartas (pila de descartes) que vuelven al mazo.
+   */
+  public void replenishDeck(List<Card> cardsToReturn) {
+    this.cards.addAll(cardsToReturn);
+  }
+  
+  
   /**
    * Obtiene el número de cartas restantes.
    * 

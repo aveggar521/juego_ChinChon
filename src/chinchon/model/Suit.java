@@ -1,12 +1,13 @@
 package chinchon.model;
 
+import chinchon.util.Colors;
 /**
  * Enum que representa los palos de una carta.
  * @author Alejandro Vega
  */
 public enum Suit {
-  COINS("Moneda", "\u001B[33m"), CUPS("Copa", "\u001B[31m"), STAVES("Basto", "\u001B[32m"),
-  SWORDS("Espada", "\u001B[34m");
+  COINS("Moneda", Colors.AMARILLO), CUPS("Copa", Colors.ROJO), STAVES("Basto", Colors.VERDE),
+  SWORDS("Espada", Colors.AZUL);
 
   private String symbol;
   private String color;
@@ -17,7 +18,7 @@ public enum Suit {
   }
 
   public String getColoredSymbol() {
-    return color + symbol + "\u001B[0m";
+    return color + symbol + Colors.RESET;
   }
 
   /**

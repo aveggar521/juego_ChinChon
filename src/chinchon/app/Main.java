@@ -1,8 +1,10 @@
 package chinchon.app;
 
+import java.util.Scanner;
+
 import chinchon.model.Game;
 import chinchon.model.MemberFactory;
-import chinchon.util.Console;
+import chinchon.util.ConsoleInput;
 
 /**
  * Clase principal que actúa como el punto de entrada de la aplicación.
@@ -20,27 +22,41 @@ public class Main {
      * * @param args Argumentos de la línea de comandos (no se utilizan en este proyecto).
      */
     public static void main(String[] args) {
-        Console console = new Console();
+    	Scanner scanner = new Scanner(System.in);
+    	
+        ConsoleInput console = new ConsoleInput(scanner);
 
-        console.println("=== BIENVENIDO AL CHINCHÓN ===");
+        String RESET = "\u001B[0m";
+        String ROJO = "\u001B[31m";
+        String VERDE = "\u001B[32m";
+        String AMARILLO = "\u001B[33m";
+        String AZUL = "\u001B[34m";
+
+        System.out.println(VERDE + "♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣" + RESET);
+        System.out.println(AMARILLO + "♦" + RESET + "                                                                    " + ROJO + "♥" + RESET);
+        System.out.println("        " + AZUL + "♠" + RESET + "  B I E N V E N I D O   A L   C H I N C H Ó N  " + VERDE + "♣" + RESET);
+        System.out.println("                                        ");
+        System.out.println(ROJO + "♥" + RESET + "                                                                    " + AMARILLO + "♦" + RESET);
+        System.out.println(VERDE + "♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣" + RESET);
+        System.out.println();
         
         // 1. Pedimos el límite de puntos
-        console.println("Introduce el límite de puntos para la partida (ej. 100):");
-        int limitePuntos = Integer.parseInt(console.readLine());
+        System.out.println("Introduce el límite de puntos para la partida (ej. 100):");
+        int limitePuntos = console.readIntGreaterOrEqualThan(0);
 
         // 2. Pedimos el número de mazos
-        console.println("Introduce el número de barajas/mazos con los que jugar (ej. 1 o 2):");
-        int numeroMazos = Integer.parseInt(console.readLine());
+        System.out.println("Introduce el número de barajas/mazos con los que jugar (ej. 1 o 2):");
+        int numeroMazos = console.readIntInRange(1, 2);
 
         // 3. Inicializamos la instancia única de Game con los datos introducidos
         Game juego = Game.getInstance(limitePuntos, numeroMazos, console);
 
         // 4. Pedimos el número de jugadores para crearlos con la Factory
-        console.println("¿Cuántos jugadores humanos van a jugar?");
-        int numHumanos = Integer.parseInt(console.readLine());
+        System.out.println("¿Cuántos jugadores humanos van a jugar?");
+        int numHumanos = console.readIntGreaterOrEqualThan(0);
 
-        console.println("¿Cuántos oponentes máquina (IA) quieres añadir?");
-        int numMaquinas = Integer.parseInt(console.readLine());
+        System.out.println("¿Cuántos oponentes máquina (IA) quieres añadir?");
+        int numMaquinas = console.readIntGreaterOrEqualThan(0);
 
         // 5. Creamos y añadimos los jugadores usando "PLAYER" y "MACHINE"
         for (int i = 1; i <= numHumanos; i++) {
@@ -53,5 +69,6 @@ public class Main {
 
         // 6. Arrancamos el motor del juego
         juego.startGame();
-    }
+        scanner.close();   
+        }
 }

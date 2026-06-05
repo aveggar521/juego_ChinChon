@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Representa la mano de cartas de un jugador y su lógica de combinaciones.
+ * Representa la mano de cartas de un jugador y su lógica matemática de combinaciones.
  * @author Alejandro Vega
  */
 public class Hand {
@@ -36,7 +36,8 @@ public class Hand {
   }
 
   /**
-   * Ordena las cartas por valor para facilitar la detección de escaleras. Utiliza el método de la burbuja para evitar herramientas no explicadas.
+   * Ordena las cartas por valor para facilitar la detección de escaleras y grupos.
+   * Utiliza el método de la burbuja para ajustarse al nivel del curso.
    */
   public void sortCards() {
     for (int i = 0; i < cards.size() - 1; i++) {
@@ -51,9 +52,8 @@ public class Hand {
   }
 
   /**
-   * Calcula los puntos de las cartas que NO están combinadas. 
-   * 
-   * @return Suma de valores de cartas sueltas.
+   * Calcula los puntos de las cartas que NO están combinadas en series ni escaleras.
+   * * @return Suma de valores de cartas sueltas.
    */
   public int calculatePoints() {
     boolean[] combined = getCombinedMask();
@@ -69,18 +69,21 @@ public class Hand {
 
   /**
    * Verifica si el jugador tiene Chinchón (7 cartas consecutivas del mismo palo).
+   * Es válido tanto si tiene 7 cartas como si tiene 8 (antes de descartar).
+   * * @return true si localiza una racha perfecta de 7 cartas consecutivas del mismo palo.
    */
   public boolean hasChinchon() {
-    boolean isChinchon = false;
-    if (cards.size() == 7) {
-      sortCards();
+    sortCards();
+    
+    // Buscamos si existe alguna racha de 7 cartas consecutivas del mismo palo
+    for (int start = 0; start <= cards.size() - 7; start++) {
       boolean isSameSuit = true;
       boolean isConsecutive = true;
-      Suit firstSuit = cards.get(0).getSuit();
+      Suit firstSuit = cards.get(start).getSuit();
 
-      int i = 0;
-      while (i < cards.size() - 1) {
-        if (cards.get(i).getSuit() != firstSuit) {
+      int i = start;
+      while (i < start + 6) {
+        if (cards.get(i).getSuit() != firstSuit || cards.get(i + 1).getSuit() != firstSuit) {
           isSameSuit = false;
         }
         if (!areConsecutive(cards.get(i), cards.get(i + 1))) {
@@ -88,25 +91,31 @@ public class Hand {
         }
         i++;
       }
-      isChinchon = isSameSuit && isConsecutive;
+
+      if (isSameSuit && isConsecutive) {
+        return true;
+      }
     }
-    return isChinchon;
+    return false;
   }
 
   /**
-   * Determina si el jugador puede cerrar la ronda.
+   * Determina si el jugador puede cerrar la ronda (puntos sueltos <= 5).
+   * * @return true si cumple las condiciones para cerrar.
    */
   public boolean canClose() {
     if (hasChinchon()) {
       return true;
     }
-    // Para cerrar necesita 6 combinadas y una suelta <= 5, o las 7 combinadas.
-    // Eso equivale a que los puntos de las cartas NO combinadas sean <= 5.
     return calculatePoints() <= 5;
   }
 
   /**
-   * Método auxiliar para verificar si dos cartas son consecutivas respetando el salto de la baraja española (7 al 10).
+   * Método auxiliar para verificar si dos cartas son consecutivas respetando 
+   * el salto de la baraja española tradicional (del 7 al 10).
+   * * @param c1 Primera carta.
+   * @param c2 Segunda carta (debería ser la inmediata superior).
+   * @return true si son consecutivas numéricamente en la baraja.
    */
   private boolean areConsecutive(Card c1, Card c2) {
     int v1 = c1.getValue();
@@ -118,45 +127,72 @@ public class Hand {
   }
 
   /**
-   * Crea una máscara booleana identificando qué cartas forman grupos (mismo número). Se marca como 'true' toda carta que pertenezca a un grupo de 3 o más.
+   * Crea una máscara booleana identificando qué cartas forman combinaciones válidas.
+   * Evalúa tanto grupos (mismo número) como escaleras (mismo palo y consecutivas).
+   * * @return Un array booleano indexado igual que la lista de cartas.
+   */
+  /**
+   * Crea una máscara booleana identificando qué cartas forman combinaciones válidas.
+   * Evalúa tanto grupos (mismo número) como escaleras (mismo palo y consecutivas).
+   * @return Un array booleano indexado igual que la lista de cartas.
    */
   private boolean[] getCombinedMask() {
     boolean[] combined = new boolean[cards.size()];
     sortCards();
 
-    // Identificar grupos de cartas con el mismo valor (Tríos o Cuartetos)
+    // --- PASO 1: DETECTAR GRUPOS (Mismo valor numérico, mínimo 3 cartas) ---
     int i = 0;
     while (i < cards.size()) {
       int valueToCompare = cards.get(i).getValue();
       int count = 0;
-      int j = 0;
 
-      // Contamos cuántas cartas hay con el mismo valor
-      while (j < cards.size()) {
-        if (cards.get(j).getValue() == valueToCompare) {
+      for (Card c : cards) {
+        if (c.getValue() == valueToCompare) {
           count++;
         }
-        j++;
       }
 
-      // Si hay 3 o más, marcamos todas las cartas de ese valor como combinadas
       if (count >= 3) {
-        int k = 0;
-        while (k < cards.size()) {
+        for (int k = 0; k < cards.size(); k++) {
           if (cards.get(k).getValue() == valueToCompare) {
             combined[k] = true;
           }
-          k++;
         }
       }
       i++;
     }
 
+    // --- PASO 2: DETECTAR ESCALERAS (Mismo palo y consecutivas, mínimo 3 cartas) ---
+    // Recorremos cada carta como posible inicio de una escalera
+    for (int start = 0; start < cards.size(); start++) {
+      List<Integer> rachaIndices = new ArrayList<>();
+      rachaIndices.add(start);
+      
+      int current = start;
+      // Buscamos hacia adelante cartas que continúen la secuencia del mismo palo
+      for (int next = start + 1; next < cards.size(); next++) {
+        Card cCurrent = cards.get(current);
+        Card cNext = cards.get(next);
+        
+        if (cNext.getSuit() == cCurrent.getSuit() && areConsecutive(cCurrent, cNext)) {
+          rachaIndices.add(next);
+          current = next; // Avanzamos el listón de la racha
+        }
+      }
+      
+      // Si encontramos una racha consecutiva de 3 o más, las marcamos
+      if (rachaIndices.size() >= 3) {
+        for (int index : rachaIndices) {
+          combined[index] = true;
+        }
+      }
+    }
+
     return combined;
   }
-
   @Override
   public String toString() {
+    sortCards(); 
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < cards.size(); i++) {
       sb.append((i + 1)).append(": ").append(cards.get(i)).append("\n");

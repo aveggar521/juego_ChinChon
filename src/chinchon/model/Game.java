@@ -3,7 +3,7 @@ package chinchon.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import chinchon.util.Console;
+import chinchon.util.ConsoleInput;
 
 /**
  * Controla toda la lógica del juego Chinchón. Implementa el patrón Singleton para asegurar una única instancia de la partida. Se encarga de gestionar los turnos, el mazo, los descartes y las puntuaciones.
@@ -38,8 +38,8 @@ public class Game {
   /** Número máximo de veces que se puede reiniciar el mazo. */
   private static final int MAX_RESETS = 2;
 
-  /** Interfaz de consola para la entrada y salida de datos. */
-  private Console console;
+  /** C de consola para la entrada y salida de datos. */
+  private ConsoleInput console;
 
   /**
    * Constructor privado para aplicar el patrón Singleton. Inicializa los componentes básicos de la partida. 
@@ -47,7 +47,7 @@ public class Game {
    * @param numberOfDecks Cantidad de mazos de cartas a utilizar.
    * @param console       Instancia de la utilidad de consola para la comunicación.
    */
-  private Game(int pointLimit, int numberOfDecks, Console console) {
+  private Game(int pointLimit, int numberOfDecks, ConsoleInput console) {
     this.players = new ArrayList<>();
     this.deck = new Deck(numberOfDecks);
     this.discardPile = new ArrayList<>();
@@ -65,7 +65,7 @@ public class Game {
    * @param console       Instancia de la utilidad de consola.
    * @return La instancia única de la clase Game.
    */
-  public static Game getInstance(int pointLimit, int numberOfDecks, Console console) {
+  public static Game getInstance(int pointLimit, int numberOfDecks, ConsoleInput console) {
     if (instance == null) {
       instance = new Game(pointLimit, numberOfDecks, console);
     }
@@ -81,25 +81,50 @@ public class Game {
   }
 
   /**
-   * Inicia el flujo principal de la partida. Reparte las cartas y mantiene el bucle de juego hasta que se determine un ganador.
+   * Inicia el flujo principal de la partida. Reparte las cartas, inicializa
+   * la pila de descartes y mantiene el bucle de juego por rondas.
    */
   public void startGame() {
     dealCards();
-    discardPile.add(deck.drawCard());
+    if (!deck.isEmpty()) {
+      discardPile.add(deck.drawCard());
+    }
+    System.out.println("\n¡Todo listo! Pulsa ENTER para comenzar la partida...");
+    try {
+        System.in.read(); 
+    } catch (Exception e) {
+    }
 
     while (!gameOver) {
       playRound();
       if (!gameOver) {
         checkWinner();
         handleDeckResetIfNeeded();
+        
+        if (winner == null) {
+          dealCards();
+          if (!deck.isEmpty()) {
+            discardPile.add(deck.drawCard());
+          }
+        }
       }
     }
 
     if (winner != null) {
-      console.println("\n🏆 GANADOR DE LA PARTIDA: " + winner.getName());
+      System.out.printf("\n🏆 GANADOR DE LA PARTIDA: %s\n", winner.getName());
     }
   }
 
+  /**
+   * Permite a un miembro cerrar la ronda actual de forma voluntaria.
+   * Modifica el estado del juego para finalizar la ronda.
+   * * @param player El miembro que efectúa el cierre.
+   */
+  public void closeRound(Member player) {
+    this.gameOver = true; // Detiene el bucle principal de la partida
+    System.out.printf("\n🚪 ¡%s HA CERRADO LA RONDA! Se procede al recuento de puntos.\n", player.getName());
+  }
+  
   /**
    * Reparte 7 cartas a cada jugador participante.
    */
@@ -112,62 +137,49 @@ public class Game {
   }
 
   /**
-   * Gestiona una ronda completa de juego, recorriendo los turnos de los jugadores activos. Verifica si algún jugador ha conseguido hacer Chinchón al finalizar su movimiento.
+   * Gestiona una ronda completa de juego, recorriendo continuamente los turnos 
+   * de los jugadores activos en bucle hasta que alguien decida cerrar la ronda 
+   * o haga Chinchón.
    */
   private void playRound() {
     int i = 0;
-    while (i < players.size() && !gameOver) {
+    
+    while (!gameOver) {
       Member player = players.get(i);
+      
       if (!player.isEliminated()) {
-        executeTurn(player);
-        if (player.getHand().hasChinchon()) {
+        boolean haCerrado = player.playTurn(this.deck, this.discardPile, this.console);
+        
+        if (haCerrado) {
+          gameOver = true;
+        }
+        
+        if (!gameOver && player.getHand().hasChinchon()) {
           winner = player;
           gameOver = true;
-          console.println("¡CHINCHÓN de " + player.getName() + "!");
+          System.out.printf("¡CHINCHÓN de %s!\n", player.getName());
         }
       }
-      i++;
-    }
-    if (!gameOver)
-      calculateScores();
-  }
-
-  /**
-   * Ejecuta las acciones de un turno individual: robar, mostrar mano y descartar. Diferencia la lógica si el jugador es humano o máquina.  
-   * @param player El miembro que debe realizar su turno.
-   */
-  private void executeTurn(Member player) {
-    console.println("\n--- Turno de: " + player.getName() + " ---");
-    Card drawn;
-    if (player instanceof Machine) {
-      drawn = deck.drawCard();
-    } else {
-      console.println("1. Mazo | 2. Descarte ("
-          + (discardPile.isEmpty() ? "Vacío" : discardPile.get(discardPile.size() - 1)) + ")");
-      int choice = readIntInRange(1, 2);
-      if (choice == 2 && !discardPile.isEmpty()) {
-        drawn = discardPile.remove(discardPile.size() - 1);
-      } else {
-        drawn = deck.drawCard();
+      
+      if (deck.isEmpty()) {
+        gameOver = true;
       }
+      
+      i = (i + 1) % players.size();
     }
-    player.getHand().addCard(drawn);
-    console.println("Has robado: " + drawn);
-    console.println("Tu mano actual:\n" + player.getHand().toString());
-
-    int index;
-    if (player instanceof Machine) {
-      index = ((Machine) player).chooseDiscardIndex();
-    } else {
-      console.println("Elige índice de carta a descartar (1-8):");
-      index = readIntInRange(1, 8) - 1;
+    
+    System.out.println("\n--- FIN DE LA RONDA: RECUENTO DE PUNTOS ---");
+    calculateScores();
+    
+    if (winner == null) {
+      for (Member m : players) {
+        m.getHand().clear(); 
+      }
+      discardPile.clear();
+      deckResetCount = 0;
+      gameOver = false; 
     }
-
-    Card discarded = player.getHand().removeCard(index);
-    discardPile.add(discarded);
-    console.println(player.getName() + " ha descartado: " + discarded);
   }
-
   /**
    * Calcula los puntos de las cartas no combinadas de cada jugador y los suma a su puntuación acumulada. Elimina jugadores si superan el límite.
    */
@@ -176,45 +188,25 @@ public class Game {
       if (!m.isEliminated()) {
         int points = m.getHand().calculatePoints();
         m.addScore(points);
-        console.println(m.getName() + " suma " + points + " puntos. Total: " + m.getScore());
+        System.out.printf("%s suma %d puntos. Total: %d\n", m.getName(), points, m.getScore());
         if (m.getScore() >= pointLimit) {
           m.eliminate();
-          console.println("❌ " + m.getName() + " ha sido eliminado.");
+          System.out.printf("❌ %s ha sido eliminado.\n", m.getName());
         }
       }
     }
   }
-
+ 
   /**
-   * Lee un entero por consola asegurando que se encuentra en un rango específico. 
-   * 
-   * @param min Valor mínimo aceptado.
-   * @param max Valor máximo aceptado.
-   * @return El número entero validado introducido por el usuario.
-   */
-  private int readIntInRange(int min, int max) {
-    int value = -1;
-    while (true) {
-      try {
-        value = Integer.parseInt(console.readLine());
-        if (value >= min && value <= max)
-          return value;
-        console.println("Introduce un número entre " + min + " y " + max + ":");
-      } catch (Exception e) {
-        console.println("Entrada no válida. Introduce un número:");
-      }
-    }
-  }
-
-  /**
-   * Verifica si el mazo se ha agotado y procede a reiniciarlo utilizando la pila de descartes si no se ha superado el límite máximo de reinicios.
+   * Verifica si el mazo se ha agotado al final de una ronda y procede a reiniciarlo 
+   * utilizando de forma segura las cartas de la pila de descartes.
    */
   private void handleDeckResetIfNeeded() {
     if (deck.isEmpty() && deckResetCount < MAX_RESETS) {
-      console.println("\n🔄 El mazo se ha agotado. Barajando descarte...");
-      deck.initializeDeck();
+      System.out.println("\n🔄 El mazo se ha agotado. Barajando la pila de descartes...");
+      deck.replenishDeck(this.discardPile);
       deck.shuffle();
-      discardPile.clear();
+      this.discardPile.clear();
       deckResetCount++;
     } else if (deck.isEmpty()) {
       gameOver = true;

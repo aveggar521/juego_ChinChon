@@ -1,5 +1,9 @@
 package chinchon.model;
 
+import java.util.List;
+
+import chinchon.util.ConsoleInput;
+
 /**
  * Representa un participante de la partida.
  * @author Alejandro Vega
@@ -93,5 +97,5 @@ public abstract class Member {
   /**
    * Realiza el turno del participante.
    */
-  public abstract void playTurn();
+  public abstract boolean playTurn(Deck deck, List<Card> discardPile, ConsoleInput console);
 }
