@@ -23,30 +23,32 @@ public class Machine extends Member {
    */
   @Override
   public boolean playTurn(Deck deck, List<Card> discardPile, ConsoleInput console, int turnCount, int totalMembers) {
-      System.out.printf("\n--- Turno de %s (IA) ---\n", getName());
+      System.out.printf("\n--- Turno de %s (IA). Su mano actual es: \n", getName());
+      System.out.println(getHand());
       
-      // 1. FASE DE ROBO: La IA decide de dónde robar de forma inteligente
+      if (!discardPile.isEmpty()) {
+          System.out.println("Carta en la pila de descartes: " + discardPile.get(discardPile.size() - 1));
+      }
+
       Card cartaRobada;
       boolean prefiereMazo = true;
       
-      // Si la pila de descartes no está vacía, evalúa si la carta es buena (valor bajo <= 5)
       if (!discardPile.isEmpty()) {
           Card cartaDescarte = discardPile.get(discardPile.size() - 1);
           if (cartaDescarte.getValue() <= 5) {
-              prefiereMazo = false; // Le sirve, la recoge
+              prefiereMazo = false;
           }
       }
       
       if (prefiereMazo) {
           cartaRobada = deck.drawCard();
-          System.out.printf("🤖 %s ha robado una carta del mazo.\n", getName());
+          System.out.printf("🤖 %s ha robado del mazo: %s\n", getName(), cartaRobada);
       } else {
           cartaRobada = discardPile.remove(discardPile.size() - 1);
-          System.out.printf("🤖 %s ha recogido del descarte: %s\n", getName(), cartaRobada);
+          System.out.printf("📥 %s ha recogido del descarte: %s\n", getName(), cartaRobada);
       }
       getHand().addCard(cartaRobada);
 
-      // 2. FASE DE DECISIÓN DE CIERRE: ¿Cumple los requisitos para cerrar?
       boolean aiWantsToClose = false;
       if (turnCount >= totalMembers) {
           int uncombinedPoints = getHand().calculatePoints();
@@ -55,18 +57,21 @@ public class Machine extends Member {
           }
       }
 
-      // 3. FASE DE DESCARTE: Si no cierra la ronda, obligatoriamente debe descartar
+      System.out.printf("%s está evaluando su mano tras robar: \n", getName());
+      System.out.println(getHand());
+
       if (!aiWantsToClose) {
           int indiceDescarte = chooseDiscardIndex();
           Card cartaDescartada = getHand().removeCard(indiceDescarte);
-          System.out.printf("📤 %s ha descartado una carta.\n", getName());
+          System.out.printf("📤 %s ha descartado: %s\n", getName(), cartaDescartada);
           discardPile.add(cartaDescartada);
       } else {
-          // Si va a cerrar, el enunciado dice que "al cerrar ya se está descartando",
-          // tiramos su peor carta para finalizar con 7 cartas en mano
           int indiceDescarte = chooseDiscardIndex();
-          discardPile.add(getHand().removeCard(indiceDescarte));
+          Card cartaDescartada = getHand().removeCard(indiceDescarte);
+          discardPile.add(cartaDescartada);
       }
+
+      System.out.println("------------------------------------------------");
 
       return aiWantsToClose;
   }
