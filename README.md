@@ -77,7 +77,7 @@ La documentación se ha exportado automáticamente a páginas HTML para que se p
 
 Para demostrar que todo el código está bien etiquetado y que el JavaDoc se genera sin problemas, aquí dejo una captura de cómo se ve la documentación de la clase principal:
 
-![Evidencia de JavaDoc](./assets/captura_javadoc.png)
+![Ver Documentación Javadoc del Proyecto](https://aveggar521.github.io/juego_ChinChon/javadoc)
 
 ### Requisitos Previos
 * Java JDK 21 o superior.
