@@ -73,7 +73,7 @@ Todo el código del proyecto está documentado usando el estándar **JavaDoc**. 
 La documentación se ha exportado automáticamente a páginas HTML para que se pueda revisar de forma cómoda desde el navegador:
 
 * **Dónde están los archivos:** Toda esta documentación web se ha guardado en la carpeta raíz dentro de [`docs/javadoc/`](./docs/javadoc/).
-* **Cómo verla:** Para navegar por todas las clases y métodos como si fuera una web oficial, solo hay que abrir el archivo principal [**`Página JavaDOC`**]((https://aveggar521.github.io/juego_ChinChon/javadoc/) con cualquier navegador (Chrome, Firefox, etc.).
+* **Cómo verla:** Para navegar por todas las clases y métodos como si fuera una web oficial, solo hay que abrir el archivo principal [**`Página JavaDoc`**](https://aveggar521.github.io/juego_ChinChon/javadoc/) con cualquier navegador (Chrome, Firefox, etc.).
 
 Para demostrar que todo el código está bien etiquetado y que el JavaDoc se genera sin problemas, aquí dejo una captura de cómo se ve la documentación de la clase principal:
 
