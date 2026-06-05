@@ -97,5 +97,5 @@ public abstract class Member {
   /**
    * Realiza el turno del participante.
    */
-  public abstract boolean playTurn(Deck deck, List<Card> discardPile, ConsoleInput console);
+  public abstract boolean playTurn(Deck deck, List<Card> discardPile, ConsoleInput console, int turnCount, int totalMembers);
 }

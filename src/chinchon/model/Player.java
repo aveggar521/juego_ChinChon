@@ -1,6 +1,7 @@
 package chinchon.model;
 
 import java.util.List;
+
 import chinchon.util.ConsoleInput;
 
 /**
@@ -14,55 +15,48 @@ public class Player extends Member {
   }
 
   @Override
-  public boolean playTurn(Deck deck, List<Card> discardPile, ConsoleInput console) {
-    System.out.printf("\n--- Turno de: %s ---\n", getName());
-    
-    // 1. Mostrar la mano al inicio del turno (tiene 7 cartas)
-    System.out.printf("Tu mano actual:\n%s\n", getHand().toString());
-    
-    String descarteInfo = discardPile.isEmpty() ? "Vacío" : discardPile.get(discardPile.size() - 1).toString();
-    System.out.printf("¿De dónde quieres robar? -> 1. Mazo | 2. Descarte (%s)\n", descarteInfo);
-    
-    // 2. Ejecutar la acción de robar
-    int choice = console.readIntInRange(1, 2);
-    Card drawn;
-    
-    if (choice == 2 && !discardPile.isEmpty()) {
-      drawn = discardPile.remove(discardPile.size() - 1);
-    } else {
-      if (choice == 2) {
-        System.out.println("La pila de descartes estaba vacía. Robas del mazo automáticamente.");
-      }
-      drawn = deck.drawCard();
-    }
-    
-    getHand().addCard(drawn); // Ahora el jugador tiene 8 cartas
-    System.out.printf("Has robado: %s\n", drawn);
-    System.out.printf("Tu mano con la nueva carta:\n%s\n", getHand().toString());
-    
-    // 3. Comprobar si puede y quiere cerrar la ronda voluntariamente
-    if (getHand().canClose()) {
-      System.out.print("⚠️ Tienes una combinación válida para cerrar la ronda. ¿Deseas cerrar? (S/N): ");
-      boolean decesCerrar = console.readBooleanUsingChar('S', 'N');
+  public boolean playTurn(Deck deck, List<Card> discardPile, ConsoleInput console, int turnCount, int totalMembers) {
+	  System.out.printf("\n--- Turno de %s. Tu mano actual es: ", getName());
+	  System.out.println(getHand());
       
-      if (decesCerrar) {
-        System.out.println("Elige el índice de la carta que dejas boca abajo para cerrar (1-8):");
-        int index = console.readIntInRange(1, 8) - 1;
-        Card discarded = getHand().removeCard(index);
-        discardPile.add(discarded);
-        
-        System.out.printf("\n🚪 ¡%s HA CERRADO LA RONDA! Se procede al recuento de puntos.\n", getName());
-        return true; // Finaliza el turno y rompe la ronda
+      if (!discardPile.isEmpty()) {
+          System.out.println("Carta en la pila de descartes: " + discardPile.get(discardPile.size() - 1));
       }
-    }
-    
-    // 4. Si no puede cerrar (o no quiere), descarta de manera ordinaria
-    System.out.println("Elige el índice de la carta que deseas descartar (1-8):");
-    int index = console.readIntInRange(1, 8) - 1;
-    Card discarded = getHand().removeCard(index);
-    discardPile.add(discarded);
-    System.out.printf("Has descartado: %s\n", discarded);
-    
-    return false; // La ronda continúa normal
+
+      System.out.print("Robar del mazo 1 | robar del descarte 2: ");
+      boolean opcionRobo = console.readBooleanUsingChar('1', '2');
+      
+      Card cartaRobada;
+      if (opcionRobo) {
+          cartaRobada = deck.drawCard();
+          System.out.println("Has robado del mazo: " + cartaRobada);
+      } else {
+          cartaRobada = discardPile.remove(discardPile.size() - 1);
+          System.out.println("Has recogido del descarte: " + cartaRobada);
+      }
+      getHand().addCard(cartaRobada);
+      boolean wantsToClose = false;
+
+      if (turnCount >= totalMembers) {
+          System.out.print("¿Quieres cerrar la ronda en este turno? (S/N): ");
+          wantsToClose = console.readBooleanUsingChar('S', 'N');
+
+          if (wantsToClose) {
+              int uncombinedPoints = getHand().calculatePoints();
+              if (uncombinedPoints > 5) {
+                  System.out.printf("❌ No puedes cerrar. Tu carta suelta vale %d puntos (MÁXIMO PERMITIDO: 5).\n", uncombinedPoints);
+                  wantsToClose = false; 
+              }
+          }
+      }
+      System.out.println("Tu mano actual tras robar: ");
+      System.out.println(getHand()); 
+      
+      System.out.print("Elige la carta que quieres descartar (1 a 8): ");
+      int indiceDescarteHumano = console.readIntInRange(1, 8);
+      
+      discardPile.add(getHand().removeCard(indiceDescarteHumano - 1));
+
+      return wantsToClose;
   }
 }

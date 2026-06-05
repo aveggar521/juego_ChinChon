@@ -126,62 +126,66 @@ public class Game {
    * de los miembros activos en bucle hasta que alguien decida cerrar.
    */
   private void playRound() {
-    int i = 0;
-    
-    while (!gameOver) {
-      Member member = members.get(i);
-      
-      if (!member.isEliminated()) {
-        boolean haCerrado = member.playTurn(this.deck, this.discardPile, this.console);
-        
-        if (haCerrado) {
-          gameOver = true;
-        }
-        
-        if (!gameOver && member.getHand().hasChinchon()) {
-          winner = member;
-          gameOver = true;
-          System.out.printf("¡CHINCHÓN de %s!\n", member.getName());
-        }
-      }
-      
-      if (deck.isEmpty()) {
-        gameOver = true;
-      }
-      
-      // Avanzamos al siguiente miembro de forma circular usando el tamaño de members
-      i = (i + 1) % members.size();
-    }
-    
-    System.out.println("\n--- FIN DE LA RONDA: RECUENTO DE PUNTOS ---");
-    calculateScores();
-    
-    if (winner == null) {
-      for (Member m : members) {
-        m.getHand().clear(); 
-      }
-      discardPile.clear();
-      deckResetCount = 0;
-      gameOver = false; 
-    }
-  }
+	    int i = 0;
+	    int turnCount = 0; 
+	    Member roundCloser = null; 
+	    while (!gameOver) {
+	      Member member = members.get(i); 
+	      if (!member.isEliminated()) {
+	    	  boolean haCerrado = member.playTurn(deck, discardPile, console, turnCount, members.size());	        
+	    	  if (haCerrado) {
+	          roundCloser = member;
+	          gameOver = true;
+	        }
+	        if (!gameOver && member.getHand().hasChinchon() && turnCount >= members.size()) {
+	          winner = member;
+	          gameOver = true;
+	          System.out.printf("¡CHINCHÓN de %s! Gana la partida automáticamente.\n", member.getName());
+	        }
+	      }
+	      
+	      if (deck.isEmpty()) {
+	        gameOver = true;
+	      }
+	      i = (i + 1) % members.size();
+	      turnCount++; 
+	    }
+	    
+	    System.out.println("\n--- FIN DE LA RONDA: RECUENTO DE PUNTOS ---");
+	    calculateScores(roundCloser); 
+	    if (winner == null) {
+	      for (Member m : members) {
+	        m.getHand().clear(); 
+	      }
+	      discardPile.clear();
+	      deckResetCount = 0;
+	      gameOver = false; 
+	    }
+	  }
 
   /**
    * Calcula los puntos de las cartas no combinadas de cada miembro.
    */
-  private void calculateScores() {
-    for (Member m : members) {
-      if (!m.isEliminated()) {
-        int points = m.getHand().calculatePoints();
-        m.addScore(points);
-        System.out.printf("%s suma %d puntos. Total: %d\n", m.getName(), points, m.getScore());
-        if (m.getScore() >= pointLimit) {
-          m.eliminate();
-          System.out.printf("❌ %s ha sido eliminado.\n", m.getName());
-        }
-      }
-    }
-  }
+  private void calculateScores(Member roundCloser) {
+	    for (Member m : members) {
+	      if (!m.isEliminated()) {
+	        int points = m.getHand().calculatePoints();
+	        
+	        if (m == roundCloser && points == 0 && !m.getHand().hasChinchon()) {
+	          m.addScore(-10); 
+	          System.out.printf("⭐ %s cerró con 7 cartas combinadas. ¡Se le restan 10 puntos!\n", m.getName());
+	        } else {
+	          m.addScore(points);
+	          System.out.printf("%s suma %d puntos. Total: %d\n", m.getName(), points, m.getScore());
+	        }
+
+	        if (m.getScore() >= pointLimit) {
+	          m.eliminate();
+	          System.out.printf("❌ %s ha sido eliminado al alcanzar el límite.\n", m.getName());
+	        }
+	      }
+	    }
+	  }
  
   /**
    * Verifica si el mazo se ha agotado al final de una ronda y procede a reiniciarlo.
@@ -189,9 +193,9 @@ public class Game {
   private void handleDeckResetIfNeeded() {
     if (deck.isEmpty() && deckResetCount < MAX_RESETS) {
       System.out.println("\n🔄 El mazo se ha agotado. Barajando la pila de descartes...");
-      deck.replenishDeck(this.discardPile);
+      deck.replenishDeck(discardPile);
       deck.shuffle();
-      this.discardPile.clear();
+      discardPile.clear();
       deckResetCount++;
     } else if (deck.isEmpty()) {
       gameOver = true;

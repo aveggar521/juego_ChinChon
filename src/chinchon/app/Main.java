@@ -22,7 +22,6 @@ public class Main {
     System.out.println(Colors.VERDE + "♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣" + Colors.RESET);
     System.out.println(Colors.AMARILLO + "♦" + Colors.RESET + "                                                                    " + Colors.ROJO + "♥" + Colors.RESET);
     System.out.println("        " + Colors.AZUL + "♠" + Colors.RESET + "  B I E N V E N I D O   A L   C H I N C H Ó N  " + Colors.VERDE + "♣" + Colors.RESET);
-    System.out.println("                     [ Versión Polimórfica ]                    ");
     System.out.println(Colors.ROJO + "♥" + Colors.RESET + "                                                                    " + Colors.AMARILLO + "♦" + Colors.RESET);
     System.out.println(Colors.VERDE + "♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣ ♣" + Colors.RESET);
     System.out.println();
@@ -36,13 +35,19 @@ public class Main {
     int numberDecks = console.readIntInRange(1, 2);
 
     // 4. Configuración de jugadores humanos
-    System.out.println("¿Cuántos jugadores humanos van a jugar? (Mínimo 1, Máximo 4):");
-    int humanPlayers = console.readIntInRange(1, 4);
+    System.out.println("¿Cuántos jugadores humanos van a jugar? (Mínimo 1, Máximo 5):");
+    int humanPlayers = console.readIntInRange(1, 5);
+
+    // Si eligen 5 jugadores, les obligamos lógicamente a jugar con 2 mazos
+    if (humanPlayers == 5 && numberDecks == 1) {
+        System.out.println(Colors.AMARILLO + "⚠️ Con 5 jugadores es obligatorio usar 2 barajas. Cambiando configuración a 2 mazos automáticamente..." + Colors.RESET);
+        numberDecks = 2;
+    }
 
     // 5. Configuración de oponentes máquina
     // Si hay 1 humano, obligamos a que haya mínimo 1 máquina para que se pueda jugar
     int minMachines = (humanPlayers == 1) ? 1 : 0;
-    int maxMachines = 4 - humanPlayers; // No permitimos más de 4 jugadores en total en la mesa
+    int maxMachines = 5 - humanPlayers; 
     
     int aiPlayers = 0;
     if (maxMachines > 0) {
@@ -51,21 +56,22 @@ public class Main {
     } else {
         System.out.println("Mesa llena con jugadores humanos. No se añaden máquinas.");
     }
-
-    System.out.println("\n🎲 ¡Configuración completada con éxito! Creando tablero de juego...");
-
-    // 6. Arrancamos la partida utilizando el patrón Singleton de tu clase Game
- // 6. Arrancamos la partida utilizando el patrón Singleton de tu clase Game
+    
     Game game = Game.getInstance(limitPoints, numberDecks, console);
     
-    // Añadimos dinámicamente los participantes configurados creando los objetos correspondientes
     for (int i = 1; i <= humanPlayers; i++) {
-      game.addMember(new Player("Jugador " + i));
-    }
+        System.out.printf("\nNombre del jugador: %s\n", i);
+        String name = console.readString();
+        game.addMember(new Player(name));
+      }
     for (int i = 1; i <= aiPlayers; i++) {
-      game.addMember(new Machine("CPU " + i));
-    }
+        String machineName = "Maquina" + i;
+        game.addMember(new Machine(machineName));
+      }
+    
+    System.out.println("\n¡Configuración completada con éxito! Creando tablero de juego...");
 
+    
     game.startGame();
     
     scanner.close();
